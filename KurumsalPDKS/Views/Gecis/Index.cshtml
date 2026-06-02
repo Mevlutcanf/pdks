@@ -1,0 +1,104 @@
+@{
+    ViewData["Title"] = "Giriş Terminali";
+}
+
+<style>
+    @@keyframes pulse-ring {
+        0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 30px rgba(56, 189, 248, 0); }
+        100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+    }
+    
+    .radar-box {
+        background-color: #0f172a;
+        border: 2px solid #38bdf8;
+        border-radius: 50%;
+        width: 250px;
+        height: 250px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        animation: pulse-ring 2.5s infinite;
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.3) inset;
+        transition: 0.3s;
+    }
+    
+    .rfid-input { opacity: 0; position: absolute; z-index: -1; }
+    
+    .status-alert { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; }
+    .text-success-neon { color: #34d399; text-shadow: 0 0 10px rgba(52, 211, 153, 0.5); }
+    .text-danger-neon { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.5); }
+    
+    /* Manuel Giriş Kutusu Stilleri */
+    .manuel-input { background-color: rgba(15, 23, 42, 0.8) !important; border-color: #38bdf8 !important; color: #38bdf8 !important; font-family: monospace; }
+    .manuel-input:focus { box-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+</style>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-7 text-center">
+        
+        <h2 class="fw-bold text-white mb-2">Giriş Terminali</h2>
+        <p style="color: #64748b;" class="mb-5">Lütfen yaka kartınızı okuyucuya yaklaştırın</p>
+
+        @if(ViewBag.Mesaj != null)
+        {
+            var isSuccess = ViewBag.Durum == "success";
+            var textClass = isSuccess ? "text-success-neon" : "text-danger-neon";
+            var iconClass = isSuccess ? "fa-unlock" : "fa-lock";
+            
+            <div class="status-alert py-4 px-5 mb-5 shadow-lg d-inline-block">
+                <h3 class="mb-0 fw-bold @textClass">
+                    <i class="fas @iconClass me-3"></i>@ViewBag.Mesaj
+                </h3>
+            </div>
+        }
+
+        <div class="mt-4">
+            <div class="radar-box">
+                <i class="fas fa-broadcast-tower fa-3x mb-2" style="color: #38bdf8;"></i>
+                <div class="fw-bold mt-2" style="color: #38bdf8; letter-spacing: 2px;">TARANIYOR</div>
+            </div>
+            
+            <form method="post" action="/Gecis/Index" id="rfidForm">
+                <input type="text" name="kartNo" class="rfid-input" id="rfidKutusu" autofocus autocomplete="off" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                <button type="submit" class="d-none">Gönder</button>
+            </form>
+        </div>
+        
+        <div class="mt-5 pt-4 border-top border-secondary border-opacity-25">
+            <button class="btn btn-outline-info btn-sm rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#manuelGirisForm">
+                <i class="fas fa-tools me-2"></i>Manuel Giriş (Okuyucu Arızası)
+            </button>
+            
+            <div class="collapse mt-3" id="manuelGirisForm">
+                <div class="card bg-transparent border-0" style="max-width: 300px; margin: 0 auto;">
+                    <div class="card-body p-2">
+                        <form method="post" action="/Gecis/Index">
+                            <div class="input-group shadow-lg">
+                                <input type="text" name="kartNo" id="manuelKartInput" class="form-control manuel-input" placeholder="10 Haneli Kart ID" autocomplete="off" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                <button class="btn btn-info text-dark fw-bold" type="submit"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <small class="text-muted mt-2 d-block">Sadece donanım arızasında kullanın.</small>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Gelişmiş Odak Koruması (Focus Trap)
+    document.addEventListener('click', function(e) {
+        var rfidKutusu = document.getElementById('rfidKutusu');
+        var manuelKutu = document.getElementById('manuelKartInput');
+        
+        // Eğer tıklanan yer "Manuel Giriş" kutusu DEĞİLSE, odağı tekrar görünmez RFID kutusuna al!
+        if (e.target !== manuelKutu) {
+            rfidKutusu.focus();
+        }
+    });
+</script>

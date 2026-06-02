@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Executive Dashboard";
+}
+
+<style>
+    .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; transition: 0.3s; }
+    .glass-card:hover { transform: translateY(-4px); border-color: rgba(56, 189, 248, 0.2); }
+    .pulse-green { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); animation: pulse-g 2s infinite; }
+    @@keyframes pulse-g { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h1 class="fw-bold text-white mb-1">NEXUS ENTERPRISE CONTROL</h1>
+        <p class="text-muted mb-0">Sistem Sürümü: v2.4.0-Stable | Sunucu Durumu: Optimize</p>
+    </div>
+    <div class="d-flex align-items-center gap-2 bg-dark bg-opacity-50 px-4 py-2 rounded-pill border border-secondary border-opacity-25">
+        <div class="pulse-green"></div>
+        <small class="text-success fw-bold" style="letter-spacing: 1px;">TURNİKE AĞI AKTİF</small>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="glass-card p-4 border-start border-info border-4">
+            <div class="text-muted uppercase font-size-sm fw-bold small">İÇERİDEKİ PERSONEL</div>
+            <div class="display-5 fw-bold text-info my-2">@ViewBag.IceridekiPersonel</div>
+            <div class="text-muted small"><i class="fas fa-sign-in-alt text-success me-1"></i>Aktif Çalışma Modu</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card p-4 border-start border-warning border-4">
+            <div class="text-muted uppercase font-size-sm fw-bold small">BUGÜNKÜ TOPLAM TRAFİK</div>
+            <div class="display-5 fw-bold text-warning my-2">@ViewBag.BugunGecis</div>
+            <div class="text-muted small"><i class="fas fa-history text-warning me-1"></i>Giriş / Çıkış / Mola</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card p-4 border-start border-success border-4">
+            <div class="text-muted uppercase font-size-sm fw-bold small">AKTİF İSTİHDAM</div>
+            <div class="display-5 fw-bold text-success my-2">@ViewBag.AktifPersonel</div>
+            <div class="text-muted small"><i class="fas fa-user-check text-success me-1"></i>Yetkili Kimlik Kartı</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="glass-card p-4 border-start border-danger border-4">
+            <div class="text-muted uppercase font-size-sm fw-bold small">PASİF / ASKIDA</div>
+            <div class="display-5 fw-bold text-danger my-2">@ViewBag.PasifPersonel</div>
+            <div class="text-muted small"><i class="fas fa-user-slash text-danger me-1"></i>Erişimi Engellenenler</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="glass-card p-4 h-100">
+            <h4 class="text-white fw-bold mb-4"><i class="fas fa-shield-virus text-warning me-2"></i>Kritik Güvenlik Filtreleri</h4>
+            <ul class="list-group list-group-flush bg-transparent">
+                <li class="list-group-item bg-transparent text-light border-secondary border-opacity-25 d-flex justify-content-between py-3">
+                    <span><i class="fas fa-key text-info me-3"></i>SQL Enjeksiyon Koruması</span>
+                    <span class="badge bg-success bg-opacity-25 text-success">AKTİF</span>
+                </li>
+                <li class="list-group-item bg-transparent text-light border-secondary border-opacity-25 d-flex justify-content-between py-3">
+                    <span><i class="fas fa-microchip text-info me-3"></i>RFID Input Karakter Limiti (10 Hane)</span>
+                    <span class="badge bg-success bg-opacity-25 text-success">KİLİTLİ</span>
+                </li>
+                <li class="list-group-item bg-transparent text-light border-secondary border-opacity-25 d-flex justify-content-between py-3">
+                    <span><i class="fas fa-clock text-info me-3"></i>Vardiya Başlangıç Toleransı</span>
+                    <span class="text-muted">08:30 Maks</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="glass-card p-4 h-100">
+            <h4 class="text-white fw-bold mb-4"><i class="fas fa-server text-info me-2"></i>Donanım & Veritabanı Teşhisi (Diagnostic)</h4>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between text-muted small mb-1">
+                    <span>SQLite Veritabanı Sağlığı</span>
+                    <span class="text-success fw-bold">100% Ok</h3>
+                </div>
+                <div class="progress bg-dark" style="height: 6px;"><div class="progress-bar bg-success" style="width: 100%"></div></div>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between text-muted small mb-1">
+                    <span>RFID USB Sürücü Bağlantısı</span>
+                    <span class="text-info fw-bold">Bağlı (Klavye Modu)</span>
+                </div>
+                <div class="progress bg-dark" style="height: 6px;"><div class="progress-bar bg-info" style="width: 100%"></div></div>
+            </div>
+            <div class="mb-1">
+                <div class="d-flex justify-content-between text-muted small mb-1">
+                    <span>Gereksiz Log Şişme Oranı</span>
+                    <span class="text-warning fw-bold">0% (Otomatik Tıraşlama)</span>
+                </div>
+                <div class="progress bg-dark" style="height: 6px;"><div class="progress-bar bg-warning" style="width: 5%"></div></div>
+            </div>
+        </div>
+    </div>
+</div>

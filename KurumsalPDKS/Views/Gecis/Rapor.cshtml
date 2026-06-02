@@ -1,0 +1,136 @@
+@model IEnumerable<KurumsalPDKS.Models.GecisLog>
+@{
+    ViewData["Title"] = "Gelişmiş Denetim Raporu";
+}
+
+<style>
+    .table { color: #e2e8f0; }
+    .table thead th { background-color: #0f172a; color: #94a3b8; border-bottom: 2px solid #334155; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; padding: 15px; }
+    .table tbody td { border-bottom: 1px solid #334155; padding: 15px; vertical-align: middle; }
+    .filter-box { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; }
+    .form-control, .form-select { background-color: #0f172a !important; border: 1px solid #334155 !important; color: #fff !important; }
+    .form-control:focus, .form-select:focus { border-color: #38bdf8 !important; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+    
+    /* Canlı Yazdırma Modu CSS (IK için Yazıcı Çıktısı Özelliği) */
+    @@media print {
+        body { background: white !important; color: black !important; }
+        .filter-box, .navbar, footer, .btn-print { display: none !important; }
+        .table thead th { background: #cbd5e1 !important; color: black !important; }
+        .table tbody td { color: black !important; border-bottom: 1px solid #94a3b8 !important; }
+        .card { border: none !important; box-shadow: none !important; background: transparent !important; }
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-white mb-1"><i class="fas fa-file-invoice me-3 text-info"></i>Gelişmiş Denetim ve Log Raporu</h2>
+        <small class="text-muted">IK Mevzuatına uygun filtreleme ve çıktı alma istasyonu</small>
+    </div>
+    <button onclick="window.print();" class="btn btn-outline-info rounded-pill px-4 btn-print shadow-sm">
+        <i class="fas fa-print me-2"></i>Yazdır / PDF Aktar
+    </button>
+</div>
+
+<div class="filter-box p-4 mb-4 shadow-lg">
+    <form method="get" action="/Gecis/Rapor" class="row g-3">
+        <div class="col-md-3">
+            <label class="form-label text-muted small fw-bold">Personel Arama</label>
+            <input type="text" name="aramaMetni" class="form-control" placeholder="Ad, Soyad veya Kart No..." value="@Context.Request.Query["aramaMetni"]" />
+        </div>
+        
+        <div class="col-md-2">
+            <label class="form-label text-muted small fw-bold">Departman</label>
+            <select name="departman" class="form-select">
+                <option value="">Tüm Departmanlar</option>
+                @foreach (var dep in ViewBag.Departmanlar)
+                {
+                    <!option value="@dep" @(Context.Request.Query["departman"] == dep ? "selected" : "")>@dep</!option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label text-muted small fw-bold">İşlem Tipi</label>
+            <select name="islemTipi" class="form-select">
+                <option value="">Tüm Hareketler</option>
+                <!option value="Giriş" @(Context.Request.Query["islemTipi"] == "Giriş" ? "selected" : "")>Girişler</!option>
+                <!option value="Geç" @(Context.Request.Query["islemTipi"] == "Geç" ? "selected" : "")>Geç Kalmalar</!option>
+                <!option value="Mola" @(Context.Request.Query["islemTipi"] == "Mola" ? "selected" : "")>Molalar</!option>
+                <!option value="Çıkış" @(Context.Request.Query["islemTipi"] == "Çıkış" ? "selected" : "")>Çıkışlar</!option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label text-muted small fw-bold">Başlangıç Tarihi</label>
+            <input type="date" name="baslangicTarihi" class="form-control" value="@Context.Request.Query["baslangicTarihi"]" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label text-muted small fw-bold">Bitiş Tarihi</label>
+            <input type="date" name="bitisTarihi" class="form-control" value="@Context.Request.Query["bitisTarihi"]" />
+        </div>
+
+        <div class="col-md-1 d-flex align-items-end">
+            <button type="submit" class="btn btn-info w-100 fw-bold text-dark h-auto py-2 rounded-3 shadow">
+                <i class="fas fa-filter"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card overflow-hidden shadow-lg border-0">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Zaman Damgası</th>
+                    <th>Sicil Bilgisi</th>
+                    <th>Departman</th>
+                    <th class="text-center">Terminal Durumu / Protokol</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(!Model.Any())
+                {
+                    <tr><td colspan="4" class="text-center py-5 text-muted"><i class="fas fa-search-minus fs-2 mb-2 d-block"></i>Kriterlere uygun kayıt bulunamadı.</td></tr>
+                }
+                @foreach (var log in Model)
+                {
+                    <tr>
+                        <td class="fw-bold text-light">
+                            <i class="far fa-clock me-2 text-info opacity-75"></i>@log.GecisZamani.ToString("dd.MM.yyyy - HH:mm:ss")
+                        </td>
+                        <td class="fw-bold text-white">@log.Personel.Ad @log.Personel.Soyad <small class="text-muted d-block" style="font-size:0.75rem;">Kart UID: @log.Personel.KartNo</small></td>
+                        <td><span class="badge bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-25 px-3 py-2 rounded-pill">@log.Personel.Departman</span></td>
+                        <td class="text-center">
+                            @if(log.IslemTipi == "Giriş")
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-4 py-2 rounded-pill w-50">
+                                    <i class="fas fa-sign-in-alt me-2"></i> GİRİŞ
+                                </span>
+                            }
+                            else if(log.IslemTipi.Contains("Geç"))
+                            {
+                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-4 py-2 rounded-pill w-50" style="color: #f59e0b !important;">
+                                    <i class="fas fa-business-time me-2"></i> GEÇ KALDI
+                                </span>
+                            }
+                            else if(log.IslemTipi.Contains("Mola"))
+                            {
+                                <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-4 py-2 rounded-pill w-50">
+                                    <i class="fas fa-coffee me-2"></i> MOLA HAREKETİ
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-4 py-2 rounded-pill w-50">
+                                    <i class="fas fa-sign-out-alt me-2"></i> ÇIKIŞ
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

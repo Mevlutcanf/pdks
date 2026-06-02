@@ -1,0 +1,47 @@
+@model KurumsalPDKS.Models.Personel
+@{
+    ViewData["Title"] = "Personel Düzenle";
+}
+
+<style>
+    .cyber-input { background-color: rgba(15, 23, 42, 0.8) !important; border: 1px solid #334155 !important; color: #e2e8f0 !important; }
+    .cyber-input:focus { box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); border-color: #38bdf8 !important; }
+    .cyber-label { color: #94a3b8; font-weight: 500; margin-bottom: 8px; }
+</style>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h3 class="text-white mb-4"><i class="fas fa-user-edit text-info me-2"></i>Personel Bilgilerini Güncelle</h3>
+            
+            <form asp-action="Duzenle" method="post">
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="mb-4">
+                    <label class="cyber-label"><i class="fas fa-user me-2"></i>Ad</label>
+                    <input asp-for="Ad" class="form-control cyber-input" required />
+                </div>
+                
+                <div class="mb-4">
+                    <label class="cyber-label"><i class="fas fa-signature me-2"></i>Soyad</label>
+                    <input asp-for="Soyad" class="form-control cyber-input" required />
+                </div>
+
+                <div class="mb-4">
+                    <label class="cyber-label"><i class="fas fa-microchip me-2"></i>Kart No (RFID)</label>
+                    <input asp-for="KartNo" class="form-control cyber-input" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="cyber-label"><i class="fas fa-building me-2"></i>Departman</label>
+                    <input asp-for="Departman" class="form-control cyber-input" />
+                </div>
+
+                <div class="d-flex justify-content-between mt-5 pt-3 border-top border-secondary border-opacity-25">
+                    <a href="/Personel" class="btn btn-outline-secondary px-4 rounded-pill">İptal Et</a>
+                    <button type="submit" class="btn btn-info px-5 rounded-pill fw-bold text-dark"><i class="fas fa-save me-2"></i>Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

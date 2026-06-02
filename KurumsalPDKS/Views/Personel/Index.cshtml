@@ -1,0 +1,95 @@
+@model IEnumerable<KurumsalPDKS.Models.Personel>
+@{
+    ViewData["Title"] = "Personel Sicil Kartları";
+}
+
+<style>
+    .table { color: #e2e8f0; margin-bottom: 0; }
+    .table thead th { background-color: #0f172a; color: #94a3b8; border-bottom: 2px solid #334155; text-transform: uppercase; font-size: 0.8rem; padding: 15px; }
+    .table tbody td { border-bottom: 1px solid #334155; padding: 15px; vertical-align: middle; }
+    .btn-cyber { background: linear-gradient(135deg, #0ea5e9, #3b82f6); color: white; border: none; border-radius: 10px; padding: 10px 20px; font-weight: 500; transition: 0.3s; }
+    .btn-cyber:hover { transform: translateY(-2px); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h2 class="fw-bold mb-0 text-white">Merkezi Sicil Veritabanı</h2>
+        <small style="color: #64748b;">Kurum içi tüm yetkili personellerin listesi ve erişim izinleri</small>
+    </div>
+    <a href="/Personel/Ekle" class="btn btn-cyber"><i class="fas fa-user-plus me-2"></i>Yeni Personel Tanımla</a>
+</div>
+
+<div class="card overflow-hidden border-0 shadow-lg">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Sistem ID</th>
+                    <th>Personel Kimlik Bilgisi</th>
+                    <th>RFID UID No</th>
+                    <th>Departman</th>
+                    <th class="text-center">Erişim İzni</th>
+                    <th class="text-center">Yönetim Paneli</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center py-5 text-muted">Sistemde henüz personel verisi yok.</td></tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold" style="color: #94a3b8;">#@item.Id.ToString("D4")</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle @(item.AktifMi ? "bg-primary text-info" : "bg-secondary text-light") bg-opacity-25 d-flex justify-content-center align-items-center me-3" style="width: 42px; height: 42px; font-weight: bold; font-size:0.9rem;">
+                                    @item.Ad.Substring(0,1)@item.Soyad.Substring(0,1)
+                                </div>
+                                <div>
+                                    <div class="fw-bold @(item.AktifMi ? "text-white" : "text-muted text-decoration-line-through")">@item.Ad @item.Soyad</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="font-family: monospace; color: #38bdf8; font-size: 1.1rem;">@item.KartNo</td>
+                        <td><span class="badge bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-25 px-3 py-2 rounded-pill">@item.Departman</span></td>
+                        
+                        <td class="text-center">
+                            @if(item.AktifMi)
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">
+                                    <i class="fas fa-shield-alt me-1"></i> YETKİLİ
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill">
+                                    <i class="fas fa-lock me-1"></i> ENGELLİ
+                                </span>
+                            }
+                        </td>
+                        
+                        <td class="text-center">
+                            <a href="/Personel/Duzenle/@item.Id" class="btn btn-sm btn-outline-info rounded-pill px-3 me-1 shadow-sm">
+                                <i class="fas fa-user-edit"></i>
+                            </a>
+                            
+                            @if(item.AktifMi)
+                            {
+                                <a href="/Personel/PasifYap/@item.Id" class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm" onclick="return confirm('Bu personelin şirket kapılarından geçiş yetkisini iptal etmek istediğinize emin misiniz?');">
+                                    <i class="fas fa-user-slash"></i> Pasife Al
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="/Personel/AktifYap/@item.Id" class="btn btn-sm btn-outline-success rounded-pill px-3 shadow-sm">
+                                    <i class="fas fa-user-check"></i> Yetki Ver
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
